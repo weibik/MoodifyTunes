@@ -25,8 +25,8 @@ def get_token():
     data = {
         "grant_type": "client_credentials",
         "code": "AQAc1v9YJadkDlaQlLrTIqcpruqfsOitLwEZuB2eRmSMLu2ZT9YjqUo0FgRJgvbI0Z3X4TfDYT9NfQ1zIqQe-iBWTLqZ0Ni8H2wQ"
-                "663-J0g3jXmi4m6cuSvhLq4ZE7wlOJ97hlgrDFbl324iebfp8WXc1ALC7MrBtDGH-IFxhpT1d7_OZauDnsaJKzxM3dSKdZNYT"
-                "9lL7FE-",
+        "663-J0g3jXmi4m6cuSvhLq4ZE7wlOJ97hlgrDFbl324iebfp8WXc1ALC7MrBtDGH-IFxhpT1d7_OZauDnsaJKzxM3dSKdZNYT"
+        "9lL7FE-",
         "redirect_uri": "http://localhost/",
     }
 
