@@ -1,11 +1,10 @@
+import base64
 import json
 import os
-import base64
+from urllib.parse import urlencode
 from dotenv import load_dotenv
 from requests import post, get
 import webbrowser
-from urllib.parse import urlencode
-
 
 load_dotenv()
 client_id = os.getenv("CLIENT_ID")
