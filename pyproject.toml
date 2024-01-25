@@ -12,6 +12,7 @@ requests = "^2.31.0"
 python-dotenv = "^1.0.0"
 black = "^23.12.1"
 ruff = "^0.1.11"
+flask = "^3.0.1"
 
 
 [build-system]
