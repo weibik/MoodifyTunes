@@ -1,103 +1,110 @@
-import base64
-import json
+import urllib.parse
+import requests
+from flask import Flask, redirect, request, session, jsonify
+import secrets
 import os
-from urllib.parse import urlencode
 from dotenv import load_dotenv
-from requests import post, get
-import webbrowser
+from datetime import datetime
+
+secret_key = secrets.token_urlsafe(16)
+
+app = Flask(__name__)
+app.secret_key = secret_key
 
 load_dotenv()
-client_id = os.getenv("CLIENT_ID")
-client_secret = os.getenv("CLIENT_SECRET")
+CLIENT_ID = os.getenv("CLIENT_ID")
+CLIENT_SECRET = os.getenv("CLIENT_SECRET")
+REDIRECT_URI = "http://localhost:5000/callback"
+AUTH_URL = "https://accounts.spotify.com/authorize"
+token_url = "https://accounts.spotify.com/api/token"
+api_base_url = "https://api.spotify.com/v1/"
 
 
-def get_token():
-    auth_string = client_id + ":" + client_secret
-    auth_bytes = auth_string.encode("utf-8")
-    auth_base64 = str(base64.b64encode(auth_bytes), "utf-8")
-
-    url = "https://accounts.spotify.com/api/token"
-    headers = {
-        "Authorization": "Basic " + auth_base64,
-        "Content-Type": "application/x-www-form-urlencoded",
-    }
-    data = {
-        "grant_type": "client_credentials",
-        "code": "AQAc1v9YJadkDlaQlLrTIqcpruqfsOitLwEZuB2eRmSMLu2ZT9YjqUo0FgRJgvbI0Z3X4TfDYT9NfQ1zIqQe-iBWTLqZ0Ni8H2wQ"
-        "663-J0g3jXmi4m6cuSvhLq4ZE7wlOJ97hlgrDFbl324iebfp8WXc1ALC7MrBtDGH-IFxhpT1d7_OZauDnsaJKzxM3dSKdZNYT"
-        "9lL7FE-",
-        "redirect_uri": "http://localhost/",
-    }
-
-    result = post(url, headers=headers, data=data)
-    json_result = json.loads(result.content)
-    token = json_result["access_token"]
-    return token
+@app.route('/')
+def index():
+    return "Welcome to my Spotify App <a href='/login'>Login with Spotify</a>"
 
 
-def get_code_from_web():
-    auth_headers = {
-        "client_id": client_id,
+@app.route("/login")
+def login():
+    scope = "user-read-private user-read-email"
+
+    params = {
+        "client_id": CLIENT_ID,
         "response_type": "code",
-        "redirect_uri": "http://localhost/",
-        "scope": "user-read-email user-read-private",
+        "scope": scope,
+        "redirect_uri": REDIRECT_URI,
+        "show_dialog": True
     }
 
-    webbrowser.open("https://accounts.spotify.com/authorize?" + urlencode(auth_headers))
+    auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
+
+    return redirect(auth_url)
 
 
-def get_auth_header(token):
-    return {"Authorization": "Bearer " + token}
+@app.route("/callback")
+def callback():
+    if "error" in request.args:
+        return jsonify({"error": requests.args["error"]})
+
+    if "code" in request.args:
+        req_body = {
+            "code": request.args["code"],
+            "grant_type": "authorization_code",
+            "redirect_uri": REDIRECT_URI,
+            "client_id": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
+        }
+
+        response = requests.post(token_url, data=req_body)
+        token_info = response.json()
+
+        session["access_token"] = token_info["access_token"]
+        session["refresh_token"] = token_info["refresh_token"]
+        session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
+
+        return redirect("/playlists")
 
 
-def get_user_id(token):
-    """TODO: Needs user-read-private and user-read-email to have authorization."""
+@app.route("/playlists")
+def get_playlists():
+    if "access_token" not in session:
+        return redirect("/login")
 
-    url = "https://api.spotify.com/v1/me"
-    headers = get_auth_header(token)
-    query_url = url
-    user_params = {"limit": 50}
-    result = get(query_url, params=user_params, headers=headers)
-    json_result = json.loads(result.content)
-    if len(json_result) == 0:
-        print(f"No playlists with name {playlist_name} exits.")
-        return None
-    else:
-        return json_result
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/refresh-token")
 
+    headers = {
+        "Authorization": f"Bearer {session["access_token"]}"
+    }
 
-def search_for_artist(token, artist_name):
-    url = "https://api.spotify.com/v1/search"
-    headers = get_auth_header(token)
-    query = f"?q={artist_name}&type=artist&limit=1"
-    query_url = url + query
+    response = requests.get(api_base_url + "me/playlists", headers=headers)
 
-    result = get(query_url, headers=headers)
-    json_result = json.loads(result.content)["artists"]["items"]
-    if len(json_result) == 0:
-        print(f"No artist with name {artist_name} exits.")
-        return None
-    else:
-        return json_result[0]
+    playlists = response.json()
+
+    return jsonify(playlists)
 
 
-def search_for_playlist(token, playlist_name):
-    url = "https://api.spotify.com/v1/search"
-    headers = get_auth_header(token)
-    query = f'?q="{playlist_name}"&type=playlist'
-    query_url = url + query
-    result = get(query_url, headers=headers)
-    json_result = json.loads(result.content)["playlists"]["items"]
-    if len(json_result) == 0:
-        print(f"No playlists with name {playlist_name} exits.")
-        return None
-    else:
-        return json_result
+@app.route("/refresh-token")
+def refresh_token():
+    if "refresh_token" not in session:
+        return redirect("/login")
+
+    if datetime.now().timestamp() > session["expires_at"]:
+        req_body = {
+            "grant_type": "refresh_token",
+            "refresh_token": session["refresh_token"],
+            "client": CLIENT_ID,
+            "client_secret": CLIENT_SECRET
+        }
+        response = requests.post(token_url, data=req_body)
+        new_token_info = response.json()
+
+        session["access_token"] = new_token_info["access_token"]
+        session["expires_at"] = datetime.now().timestamp() + new_token_info["expires_in"]
+
+        return redirect("/playlists")
 
 
-def get_songs_by_artist(token, artist_id):
-    url = f"https://api.spotify.com/v1/artists/{artist_id}/top-tracks?country=US"
-    headers = get_auth_header(token)
-    result = get(url, headers=headers)
-    json_result = json.loads(result.content)["tracks"]
-    return json_result
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", debug=True)
