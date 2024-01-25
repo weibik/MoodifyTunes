@@ -20,7 +20,7 @@ token_url = "https://accounts.spotify.com/api/token"
 api_base_url = "https://api.spotify.com/v1/"
 
 
-@app.route('/')
+@app.route("/")
 def index():
     return "Welcome to my Spotify App <a href='/login'>Login with Spotify</a>"
 
@@ -34,7 +34,7 @@ def login():
         "response_type": "code",
         "scope": scope,
         "redirect_uri": REDIRECT_URI,
-        "show_dialog": True
+        "show_dialog": True,
     }
 
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
@@ -53,7 +53,7 @@ def callback():
             "grant_type": "authorization_code",
             "redirect_uri": REDIRECT_URI,
             "client_id": CLIENT_ID,
-            "client_secret": CLIENT_SECRET
+            "client_secret": CLIENT_SECRET,
         }
 
         response = requests.post(token_url, data=req_body)
@@ -74,9 +74,7 @@ def get_playlists():
     if datetime.now().timestamp() > session["expires_at"]:
         return redirect("/refresh-token")
 
-    headers = {
-        "Authorization": f"Bearer {session["access_token"]}"
-    }
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
 
     response = requests.get(api_base_url + "me/playlists", headers=headers)
 
@@ -95,13 +93,15 @@ def refresh_token():
             "grant_type": "refresh_token",
             "refresh_token": session["refresh_token"],
             "client": CLIENT_ID,
-            "client_secret": CLIENT_SECRET
+            "client_secret": CLIENT_SECRET,
         }
         response = requests.post(token_url, data=req_body)
         new_token_info = response.json()
 
         session["access_token"] = new_token_info["access_token"]
-        session["expires_at"] = datetime.now().timestamp() + new_token_info["expires_in"]
+        session["expires_at"] = (
+            datetime.now().timestamp() + new_token_info["expires_in"]
+        )
 
         return redirect("/playlists")
 
