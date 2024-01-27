@@ -1,6 +1,6 @@
 import urllib.parse
 import requests
-from flask import Flask, redirect, request, session, jsonify
+from flask import Flask, redirect, request, session, jsonify, render_template
 import secrets
 import os
 from dotenv import load_dotenv
@@ -16,13 +16,13 @@ CLIENT_ID = os.getenv("CLIENT_ID")
 CLIENT_SECRET = os.getenv("CLIENT_SECRET")
 REDIRECT_URI = "http://localhost:5000/callback"
 AUTH_URL = "https://accounts.spotify.com/authorize"
-token_url = "https://accounts.spotify.com/api/token"
-api_base_url = "https://api.spotify.com/v1/"
+TOKEN_URL = "https://accounts.spotify.com/api/token"
+API_BASE_URL = "https://api.spotify.com/v1/"
 
 
 @app.route("/")
 def index():
-    return "Welcome to my Spotify App <a href='/login'>Login with Spotify</a>"
+    return render_template("index.html")
 
 
 @app.route("/login")
@@ -34,7 +34,7 @@ def login():
         "response_type": "code",
         "scope": scope,
         "redirect_uri": REDIRECT_URI,
-        "show_dialog": True,
+        "show_dialog": False,
     }
 
     auth_url = f"{AUTH_URL}?{urllib.parse.urlencode(params)}"
@@ -56,14 +56,15 @@ def callback():
             "client_secret": CLIENT_SECRET,
         }
 
-        response = requests.post(token_url, data=req_body)
+        response = requests.post(TOKEN_URL, data=req_body)
         token_info = response.json()
 
         session["access_token"] = token_info["access_token"]
         session["refresh_token"] = token_info["refresh_token"]
         session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
 
-        return redirect("/playlists")
+        # return redirect("/playlists")
+        return redirect("/playlists_tracks")
 
 
 @app.route("/playlists")
@@ -76,11 +77,43 @@ def get_playlists():
 
     headers = {"Authorization": f"Bearer {session['access_token']}"}
 
-    response = requests.get(api_base_url + "me/playlists", headers=headers)
+    response = requests.get(API_BASE_URL + "me/playlists", headers=headers)
 
-    playlists = response.json()
+    playlists_data = response.json()
+    playlists_info = [
+        {
+            "id": playlist["id"],
+            'name': playlist['name'],
+            'image_url': playlist['images'][0]['url'] if playlist['images'] else None
+        }
+        for playlist in playlists_data.get('items', [])
+    ]
 
-    return jsonify(playlists)
+    return render_template("playlists.html", playlists_info=playlists_info)
+
+
+@app.route("/playlists_tracks")
+def get_playlist_tracks():
+    if "access_token" not in session:
+        return redirect("/login")
+
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/refresh-token")
+
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
+
+    response = requests.get(API_BASE_URL + "playlists/7l9d5YLAdIHhe7rnM1TLOJ/tracks", headers=headers)
+
+    tracks_data = response.json()
+    tracks_info = [
+        {
+            'name': track['track']['name'],
+            'artist': ', '.join([artist['name'] for artist in track['track']['artists']])
+        }
+        for track in tracks_data.get('items', [])
+    ]
+
+    return tracks_info
 
 
 @app.route("/refresh-token")
@@ -95,7 +128,7 @@ def refresh_token():
             "client": CLIENT_ID,
             "client_secret": CLIENT_SECRET,
         }
-        response = requests.post(token_url, data=req_body)
+        response = requests.post(TOKEN_URL, data=req_body)
         new_token_info = response.json()
 
         session["access_token"] = new_token_info["access_token"]
