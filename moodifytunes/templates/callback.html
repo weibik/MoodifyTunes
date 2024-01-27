@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Callback Endpoint Selection</title>
+</head>
+<body>
+    <h2>Choose Endpoint</h2>
+    <form method="post" action="{{ url_for('callback') }}">
+        <label for="endpoint">Select Endpoint:</label>
+        <select id="endpoint" name="endpoint">
+            <option value="playlists">Playlists</option>
+            <option value="other_endpoint">Other Endpoint</option>
+            <!-- Add more options as needed -->
+        </select>
+        <br>
+        <button type="submit">Continue</button>
+    </form>
+</body>
+</html>
