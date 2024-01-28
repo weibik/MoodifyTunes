@@ -5,31 +5,17 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlists</title>
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
 </head>
-<body class="bg-light">
-    <div class="container mt-4">
-        <h1 class="text-primary">Playlists</h1>
-        <ul class="list-unstyled">
-            {% for playlist in playlists_info %}
-                <li class="media bg-white p-3 rounded">
-                    <div class="row">
-                        <div align="center" class="col-md-8 d-flex align-items-center">
-                            <div class="media-body">
-                                <h5 class="mt-0 mb-1">{{ playlist.name }}</h5>
-                                {% if not playlist.image_url %}
-                                    <p>No image available</p>
-                                {% endif %}
-                            </div>
-                        </div>
-                        <div class="col-md-4">
-                            <img src="{{ playlist.image_url }}" alt="Playlist Image" class="rounded">
-                        </div>
-                    </div>
-                </li>
-            {% endfor %}
-        </ul>
-    </div>
+<body>
+    <h1>Playlists</h1>
+    <ul>
+        {% for playlist in playlists_info %}
+            <li>
+                <img src="{{ playlist['image_url'] }}" alt="Playlist Image" width="50" height="50">
+                {{ playlist['name'] }}
+                - <a href="{{ url_for('get_playlist_tracks', playlist_id=playlist['id']) }}">View Tracks</a>
+            </li>
+        {% endfor %}
+    </ul>
 </body>
 </html>
