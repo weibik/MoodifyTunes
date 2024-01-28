@@ -63,8 +63,7 @@ def callback():
         session["refresh_token"] = token_info["refresh_token"]
         session["expires_at"] = datetime.now().timestamp() + token_info["expires_in"]
 
-        # return redirect("/playlists")
-        return redirect("/playlists_tracks")
+        return redirect("/playlists")
 
 
 @app.route("/playlists")
@@ -92,8 +91,8 @@ def get_playlists():
     return render_template("playlists.html", playlists_info=playlists_info)
 
 
-@app.route("/playlists_tracks")
-def get_playlist_tracks():
+@app.route("/playlists/<string:playlist_id>/tracks")
+def get_playlist_tracks(playlist_id):
     if "access_token" not in session:
         return redirect("/login")
 
@@ -102,18 +101,42 @@ def get_playlist_tracks():
 
     headers = {"Authorization": f"Bearer {session['access_token']}"}
 
-    response = requests.get(API_BASE_URL + "playlists/7l9d5YLAdIHhe7rnM1TLOJ/tracks", headers=headers)
+    response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/tracks", headers=headers)
 
     tracks_data = response.json()
     tracks_info = [
         {
+            "id": track['track']["id"],
             'name': track['track']['name'],
             'artist': ', '.join([artist['name'] for artist in track['track']['artists']])
         }
         for track in tracks_data.get('items', [])
     ]
 
-    return tracks_info
+    return render_template("tracks.html", tracks_info=tracks_info)
+
+
+@app.route("/audio-features/<string:track_id>")
+def get_track_feature(track_id):
+    if "access_token" not in session:
+        return redirect("/login")
+
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/refresh-token")
+
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
+
+    response = requests.get(API_BASE_URL + f"audio-features/{track_id}", headers=headers)
+
+    track_data = response.json()
+
+    track_features = {
+            "duration": track_data["duration_ms"],
+            "loudness": track_data["loudness"]
+        }
+
+
+    return render_template("track_features.html", track=track_features)
 
 
 @app.route("/refresh-token")
