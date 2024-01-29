@@ -3,11 +3,45 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style_login.css') }}">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        h1 {
+            color: #1db954;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        a {
+            display: inline-block;
+            padding: 15px 30px;
+            text-decoration: none;
+            color: #ffffff;
+            background-color: #1db954;
+            border-radius: 25px;
+            transition: background-color 0.3s ease;
+        }
+
+        a:hover {
+            background-color: #25a44e;
+        }
+    </style>
     <title>Welcome to my Spotify App</title>
 </head>
 <body>
-    <h1>Welcome to my Spotify App</h1>
-    <p><a href="{{ url_for('login') }}">Login with Spotify</a></p>
+    <div>
+        <h1>Moodify Tunes</h1>
+        <p><a href="{{ url_for('login') }}">Login with Spotify</a></p>
+    </div>
 </body>
 </html>
