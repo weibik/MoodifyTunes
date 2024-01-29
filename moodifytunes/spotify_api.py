@@ -82,10 +82,10 @@ def get_playlists():
     playlists_info = [
         {
             "id": playlist["id"],
-            'name': playlist['name'],
-            'image_url': playlist['images'][0]['url'] if playlist['images'] else None
+            "name": playlist["name"],
+            "image_url": playlist["images"][0]["url"] if playlist["images"] else None,
         }
-        for playlist in playlists_data.get('items', [])
+        for playlist in playlists_data.get("items", [])
     ]
 
     return render_template("playlists.html", playlists_info=playlists_info)
@@ -101,16 +101,20 @@ def get_playlist_tracks(playlist_id):
 
     headers = {"Authorization": f"Bearer {session['access_token']}"}
 
-    response = requests.get(API_BASE_URL + f"playlists/{playlist_id}/tracks", headers=headers)
+    response = requests.get(
+        API_BASE_URL + f"playlists/{playlist_id}/tracks", headers=headers
+    )
 
     tracks_data = response.json()
     tracks_info = [
         {
-            "id": track['track']["id"],
-            'name': track['track']['name'],
-            'artist': ', '.join([artist['name'] for artist in track['track']['artists']])
+            "id": track["track"]["id"],
+            "name": track["track"]["name"],
+            "artist": ", ".join(
+                [artist["name"] for artist in track["track"]["artists"]]
+            ),
         }
-        for track in tracks_data.get('items', [])
+        for track in tracks_data.get("items", [])
     ]
 
     return render_template("tracks.html", tracks_info=tracks_info)
@@ -126,15 +130,16 @@ def get_track_feature(track_id):
 
     headers = {"Authorization": f"Bearer {session['access_token']}"}
 
-    response = requests.get(API_BASE_URL + f"audio-features/{track_id}", headers=headers)
+    response = requests.get(
+        API_BASE_URL + f"audio-features/{track_id}", headers=headers
+    )
 
     track_data = response.json()
 
     track_features = {
-            "duration": track_data["duration_ms"],
-            "loudness": track_data["loudness"]
-        }
-
+        "duration": track_data["duration_ms"],
+        "loudness": track_data["loudness"],
+    }
 
     return render_template("track_features.html", track=track_features)
 
