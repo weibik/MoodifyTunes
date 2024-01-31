@@ -87,8 +87,9 @@ def get_playlists():
         }
         for playlist in playlists_data.get("items", [])
     ]
+    playlists_info_sorted = sorted(playlists_info, key=lambda x: x["name"])
 
-    return render_template("playlists.html", playlists_info=playlists_info)
+    return render_template("playlists.html", playlists_info=playlists_info_sorted)
 
 
 @app.route("/playlists/<string:playlist_id>/tracks")
