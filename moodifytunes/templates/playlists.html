@@ -2,20 +2,68 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlists</title>
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: #121212;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #1db954;
+            text-align: center;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        li {
+            border: 1px solid #dee2e6;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            background-color: #121212;
+            color: #ffffff;
+        }
+
+        img {
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            margin-right: 10px;
+        }
+
+        a {
+            color: #1db954;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
-    <h1>Playlists</h1>
-    <ul>
-        {% for playlist in playlists_info %}
-            <li>
-                <img src="{{ playlist['image_url'] }}" alt="Playlist Image" width="50" height="50">
-                {{ playlist['name'] }}
-                - <a href="{{ url_for('get_playlist_tracks', playlist_id=playlist['id']) }}">View Tracks</a>
-            </li>
-        {% endfor %}
-    </ul>
+    <div class="container">
+        <h1>Playlists</h1>
+        <ul>
+            {% for playlist in playlists_info %}
+                <li class="d-flex align-items-center">
+                    <img src="{{ playlist['image_url'] }}" alt="Playlist Image" width="50" height="50">
+                    <span style="color:#1db954">{{ playlist['name'] }}</span>
+                    <span class="ml-auto">
+                        <a href="{{ url_for('get_playlist_tracks', playlist_id=playlist['id']) }}">View Tracks</a>
+                    </span>
+                </li>
+            {% endfor %}
+        </ul>
+    </div>
 </body>
 </html>
