@@ -5,6 +5,7 @@ import secrets
 import os
 from dotenv import load_dotenv
 from datetime import datetime
+from tracks_rules import classify_track
 
 secret_key = secrets.token_urlsafe(16)
 
@@ -55,7 +56,6 @@ def callback():
             "client_id": CLIENT_ID,
             "client_secret": CLIENT_SECRET,
         }
-
         response = requests.post(TOKEN_URL, data=req_body)
         token_info = response.json()
 
@@ -138,11 +138,15 @@ def get_track_feature(track_id):
     track_data = response.json()
 
     track_features = {
-        "duration": track_data["duration_ms"],
-        "loudness": track_data["loudness"],
+        "acousticness": track_data["acousticness"],
+        "danceability": track_data["danceability"],
+        "energy": track_data["energy"],
+        "instrumentalness": track_data["instrumentalness"],
+        "valence": track_data["valence"],
+        "liveness": track_data["liveness"],
     }
-
-    return render_template("track_features.html", track=track_features)
+    track_type = classify_track(track_features)
+    return render_template("track_features.html", track=track_features, track_type=track_type)
 
 
 @app.route("/refresh-token")
@@ -154,7 +158,7 @@ def refresh_token():
         req_body = {
             "grant_type": "refresh_token",
             "refresh_token": session["refresh_token"],
-            "client": CLIENT_ID,
+            "client_id": CLIENT_ID,
             "client_secret": CLIENT_SECRET,
         }
         response = requests.post(TOKEN_URL, data=req_body)
