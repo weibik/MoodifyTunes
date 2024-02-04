@@ -117,8 +117,39 @@ def get_playlist_tracks(playlist_id):
         }
         for track in tracks_data.get("items", [])
     ]
-
+    session["tracks"] = tracks_info
     return render_template("tracks.html", tracks_info=tracks_info)
+
+
+@app.route("/tracks/divided")
+def divide_tracks():
+    if "access_token" not in session:
+        return redirect("/login")
+
+    if datetime.now().timestamp() > session["expires_at"]:
+        return redirect("/refresh-token")
+
+    headers = {"Authorization": f"Bearer {session['access_token']}"}
+    tracks = session.get("tracks")
+    for track in tracks:
+        track_id = track["id"]
+        response = requests.get(
+            API_BASE_URL + f"audio-features/{track_id}", headers=headers
+        )
+        track_data = response.json()
+        track_features = {
+            "acousticness": track_data["acousticness"],
+            "danceability": track_data["danceability"],
+            "energy": track_data["energy"],
+            "instrumentalness": track_data["instrumentalness"],
+            "valence": track_data["valence"],
+            "liveness": track_data["liveness"],
+            "tempo": track_data["tempo"],
+        }
+        track_type = classify_track(track_features)
+        track["type"] = track_type
+
+    return render_template("divided_tracks.html", tracks=tracks)
 
 
 @app.route("/audio-features/<string:track_id>")
@@ -144,9 +175,12 @@ def get_track_feature(track_id):
         "instrumentalness": track_data["instrumentalness"],
         "valence": track_data["valence"],
         "liveness": track_data["liveness"],
+        "tempo": track_data["tempo"],
     }
     track_type = classify_track(track_features)
-    return render_template("track_features.html", track=track_features, track_type=track_type)
+    return render_template(
+        "track_features.html", track=track_features, track_type=track_type
+    )
 
 
 @app.route("/refresh-token")
