@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Playlist Tracks</title>
+<!--    <link rel="stylesheet" href="/static/style.css">-->
+</head>
+<body>
+    <h1>Playlist Tracks</h1>
+
+    <h2>Energetic Playlist</h2>
+    <ul>
+        {% for track in tracks if track['type'] == 'Energetic Playlist' %}
+            <li>
+                {{ track['name'] }} - {{ track['artist'] }}
+                - <a href="{{ url_for('get_track_feature', track_id=track['id']) }}">View track info</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Happy/Upbeat Playlist</h2>
+    <ul>
+        {% for track in tracks if track['type'] == 'Happy/Upbeat Playlist' %}
+            <li>
+                {{ track['name'] }} - {{ track['artist'] }}
+                - <a href="{{ url_for('get_track_feature', track_id=track['id']) }}">View track info</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Sad/Reflective Playlist</h2>
+    <ul>
+        {% for track in tracks if track['type'] == 'Sad/Reflective Playlist' %}
+            <li>
+                {{ track['name'] }} - {{ track['artist'] }}
+                - <a href="{{ url_for('get_track_feature', track_id=track['id']) }}">View track info</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Acoustic Vibes Playlist</h2>
+    <ul>
+        {% for track in tracks if track['type'] == 'Acoustic Vibes Playlist' %}
+            <li>
+                {{ track['name'] }} - {{ track['artist'] }}
+                - <a href="{{ url_for('get_track_feature', track_id=track['id']) }}">View track info</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Chill/Laid-back Playlist</h2>
+    <ul>
+        {% for track in tracks if track['type'] == 'Chill/Laid-back Playlist' %}
+            <li>
+                {{ track['name'] }} - {{ track['artist'] }}
+                - <a href="{{ url_for('get_track_feature', track_id=track['id']) }}">View track info</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Live Sessions Playlist</h2>
+    <ul>
+        {% for track in tracks if track['type'] == 'Live Sessions Playlist' %}
+            <li>
+                {{ track['name'] }} - {{ track['artist'] }}
+                - <a href="{{ url_for('get_track_feature', track_id=track['id']) }}">View track info</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+    <h2>Electric Mix Playlist</h2>
+    <ul>
+        {% for track in tracks if track['type'] == 'Electric Mix Playlist' %}
+            <li>
+                {{ track['name'] }} - {{ track['artist'] }}
+                - <a href="{{ url_for('get_track_feature', track_id=track['id']) }}">View track info</a>
+            </li>
+        {% endfor %}
+    </ul>
+
+</body>
+</html>
