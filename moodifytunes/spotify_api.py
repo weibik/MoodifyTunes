@@ -118,6 +118,7 @@ def get_playlist_tracks(playlist_id):
         for track in tracks_data.get("items", [])
     ]
     session["tracks"] = tracks_info
+    session["playlist_id"] = playlist_id
     return render_template("tracks.html", tracks_info=tracks_info)
 
 
