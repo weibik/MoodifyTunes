@@ -28,7 +28,7 @@ def index():
 
 @app.route("/login")
 def login():
-    scope = "user-read-private user-read-email"
+    scope = "user-read-private user-read-email playlist-modify-public playlist-modify-private"
 
     params = {
         "client_id": CLIENT_ID,
