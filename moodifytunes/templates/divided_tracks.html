@@ -6,10 +6,17 @@
     <title>Playlist Tracks</title>
 <!--    <link rel="stylesheet" href="/static/style.css">-->
 </head>
+<style>
+    h2 {
+        margin: 0;
+        display: inline-block;
+    }
+</style>
 <body>
     <h1>Playlist Tracks</h1>
 
     <h2>Energetic Playlist</h2>
+    <a href="https://www.google.com/"> Create playlist</a>
     <ul>
         {% for track in tracks if track['type'] == 'Energetic Playlist' %}
             <li>
@@ -20,6 +27,7 @@
     </ul>
 
     <h2>Happy/Upbeat Playlist</h2>
+    <a href="https://www.google.com/"> Create playlist</a>
     <ul>
         {% for track in tracks if track['type'] == 'Happy/Upbeat Playlist' %}
             <li>
@@ -30,6 +38,7 @@
     </ul>
 
     <h2>Sad/Reflective Playlist</h2>
+    <a href="https://www.google.com/"> Create playlist</a>
     <ul>
         {% for track in tracks if track['type'] == 'Sad/Reflective Playlist' %}
             <li>
@@ -40,6 +49,7 @@
     </ul>
 
     <h2>Acoustic Vibes Playlist</h2>
+    <a href="https://www.google.com/"> Create playlist</a>
     <ul>
         {% for track in tracks if track['type'] == 'Acoustic Vibes Playlist' %}
             <li>
@@ -50,6 +60,7 @@
     </ul>
 
     <h2>Chill/Laid-back Playlist</h2>
+    <a href="https://www.google.com/"> Create playlist</a>
     <ul>
         {% for track in tracks if track['type'] == 'Chill/Laid-back Playlist' %}
             <li>
@@ -60,6 +71,7 @@
     </ul>
 
     <h2>Live Sessions Playlist</h2>
+    <a href="https://www.google.com/"> Create playlist</a>
     <ul>
         {% for track in tracks if track['type'] == 'Live Sessions Playlist' %}
             <li>
@@ -70,6 +82,7 @@
     </ul>
 
     <h2>Electric Mix Playlist</h2>
+    <a href="https://www.google.com/"> Create playlist</a>
     <ul>
         {% for track in tracks if track['type'] == 'Electric Mix Playlist' %}
             <li>
