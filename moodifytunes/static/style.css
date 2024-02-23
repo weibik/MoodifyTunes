@@ -10,22 +10,58 @@ body {
     height: 100vh;
 }
 
+.playlist-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.playlist {
+    margin-bottom: 10px;
+}
+
 h1 {
     color: #1db954;
     text-align: center;
-    margin-bottom: 30px;
+    margin-bottom: 20px;
 }
 
 a {
     display: inline-block;
-    padding: 15px 30px;
+    padding: 15px 20px;
     text-decoration: none;
     color: #ffffff;
     background-color: #1db954;
     border-radius: 25px;
     transition: background-color 0.3s ease;
+    margin-bottom: 10px
+    margin-top: 20px
+}
+
+a.playlist {
+    background-color: transparent;
+    padding: 5px 10px;
+}
+
+a.button {
+    padding: 3px 6px;
+    margin-left: 10px
+    font-weight: normal;
 }
 
 a:hover {
     background-color: #25a44e;
+}
+
+ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    width: 500px
+}
+
+li {
+    text-align: center;
+    margin-bottom: 3px;
 }
