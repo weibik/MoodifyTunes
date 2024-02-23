@@ -2,22 +2,23 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="/static/style.css">
     <title>Track feature</title>
 </head>
 <body>
-    <h1>Track Features</h1>
-    <ul>
-        <li>Acousticness: {{ track['acousticness'] }}</li>
-        <li>Danceability: {{ track['danceability'] }}</li>
-        <li>Energy: {{ track['energy'] }}</li>
-        <li>Instrumentalness: {{ track['instrumentalness'] }}</li>
-        <li>Liveness: {{ track['liveness'] }}</li>
-        <li>Valence: {{ track['valence'] }}</li>
-        <li>Tempo: {{ track['tempo'] }}</li>
-        <li>TYPE: {{ track_type }}</li>
-    </ul>
+    <div class="playlist-container">
+        <h1>Track Features</h1>
+        <ul>
+            <li>Acousticness: {{ track['acousticness'] }}</li>
+            <li>Danceability: {{ track['danceability'] }}</li>
+            <li>Energy: {{ track['energy'] }}</li>
+            <li>Instrumentalness: {{ track['instrumentalness'] }}</li>
+            <li>Liveness: {{ track['liveness'] }}</li>
+            <li>Valence: {{ track['valence'] }}</li>
+            <li>Tempo: {{ track['tempo'] }}</li>
+            <li>TYPE: {{ track_type }}</li>
+        </ul>
+    </div>
 </body>
 </html>
