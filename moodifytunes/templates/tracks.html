@@ -5,28 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Playlist Tracks</title>
     <link rel="stylesheet" href="/static/style.css">
-    <style>
-        body {
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            text-align: left;
-        }
-        a {
-            background-color: transparent;
-            padding: 5px 10px;
-        }
-    </style>
 </head>
 <body>
-    <h1>Playlist Tracks</h1>
-    <ul>
-        {% for track in tracks_info %}
-            <li>
-                <a href="{{ url_for('get_track_feature', track_id=track['id']) }}">{{ track['name'] }} - {{ track['artist'] }}</a>
-            </li>
-        {% endfor %}
-    </ul>
-    <a style="background-color: #1db954; padding: 10px 20px;" href="{{ url_for('divide_tracks') }}">Divided tracks</a>
+    <div class="playlist-container">
+        <h1>Playlist Tracks</h1>
+            <div class="playlist">
+                <ul>
+                    {% for track in tracks_info %}
+                        <li>
+                            <a class="playlist" href="{{ url_for('get_track_feature', track_id=track['id']) }}">{{ track['name'] }} - {{ track['artist'] }}</a>
+                        </li>
+                    {% endfor %}
+                </ul>
+                <a href="{{ url_for('divide_tracks') }}">Divided tracks</a>
+            </div>
+    </div>
 </body>
 </html>
